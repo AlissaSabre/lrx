@@ -6,19 +6,12 @@ using System.Threading.Tasks;
 
 namespace lrx
 {
-    public enum LocResFormat
-    {
-        Auto,
-        Old,
-        New,
-    }
-
     public static class Converter
     {
         public static void Import(string sourceLocRes, string outputXliff, string sourceLang, string targetLang)
         {
             var locres = LocRes.Read(sourceLocRes);
-            var builder = new XliffBuilder() { SourceLang = sourceLang, TargetLang = targetLang, Origin = sourceLocRes };
+            var builder = new XliffBuilder() { SourceLang = sourceLang, TargetLang = targetLang, Origin = sourceLocRes, LocResFormat = locres.Format };
             foreach (var table in locres.Tables)
             {
                 foreach (var entry in table.Entries)
@@ -34,7 +27,8 @@ namespace lrx
         {
             var source = LocRes.Read(sourceLocRes);
             var target = LocRes.Read(targetLocRes);
-            var builder = new XliffBuilder() { SourceLang = sourceLang, TargetLang = targetLang, Origin = sourceLocRes };
+            var format = (LocResFormat)Math.Max((int)source.Format, (int)target.Format);
+            var builder = new XliffBuilder() { SourceLang = sourceLang, TargetLang = targetLang, Origin = sourceLocRes, LocResFormat = format };
             foreach (var table in source.Tables)
             {
                 foreach (var entry in table.Entries)
@@ -53,6 +47,10 @@ namespace lrx
             var cruncher = new XliffCruncher();
             cruncher.Read(inputXliff);
             var locres = cruncher.Crunch();
+            if (format != LocResFormat.Auto)
+            {
+                locres.Format = format;
+            }
             locres.Save(outputLocRes);
         }
     }

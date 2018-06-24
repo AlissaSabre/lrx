@@ -16,20 +16,27 @@ namespace lrx
         public void Read(string filename)
         {
             var xliff = XElement.Load(filename);
-            if (xliff.Name != XLF.XLIFF) throw new IOException();
+            if (xliff.Name != X.XLIFF) throw new IOException();
             Xliff = xliff;
         }
 
         public LocRes Crunch()
         {
-            var names = Xliff.Descendants(XLF.TU).Select(tu => GetContext(tu, "x-locres-namespace")).Distinct().ToArray();
+            LocResFormat format = LocResFormat.Auto;
+            switch ((string)Xliff.Element(X.FILE).Attribute("datatype"))
+            {
+                case "x-locres-0": format = LocResFormat.Old; break;
+                case "x-locres-1": format = LocResFormat.New; break;
+            }
+
+            var names = Xliff.Descendants(X.TU).Select(tu => GetContext(tu, "x-locres-namespace")).Distinct().ToArray();
             var tables = new List<LocRes.Table>(names.Length);
             foreach (var n in names)
             {
                 var entries = new List<LocRes.Entry>();
-                foreach (var tu in Xliff.Descendants(XLF.TU).Where(tu => GetContext(tu, "x-locres-namespace") == n))
+                foreach (var tu in Xliff.Descendants(X.TU).Where(tu => GetContext(tu, "x-locres-namespace") == n))
                 {
-                    var text = (string)tu.Element(XLF.TARGET);
+                    var text = (string)tu.Element(X.TARGET);
                     if (text == null) continue;
 
                     var key = GetContext(tu, "x-locres-key");
@@ -46,7 +53,7 @@ namespace lrx
                 tables.Add(new LocRes.Table() { Name = n, Entries = entries });
             }
 
-            return new LocRes() { Tables = tables };
+            return new LocRes() { Tables = tables, Format = format };
         }
 
         /// <summary>
@@ -57,7 +64,7 @@ namespace lrx
         /// <returns>Content string of a context element whose context-type matches <paramref name="context_type"/>, or null if no such context exists.</returns>
         private static string GetContext(XElement tu, string context_type)
         {
-            return (string)tu.Element(XLF.CGROUP)?.Elements(XLF.CONTEXT)?.FirstOrDefault(c => (string)c.Attribute("context-type") == context_type);
+            return (string)tu.Element(X.CGROUP)?.Elements(X.CONTEXT)?.FirstOrDefault(c => (string)c.Attribute("context-type") == context_type);
         }
     }
 }

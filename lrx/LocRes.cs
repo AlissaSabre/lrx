@@ -7,11 +7,27 @@ using System.Threading.Tasks;
 
 namespace lrx
 {
+    public enum LocResFormat
+    {
+        Auto,
+        Old,
+        New,
+    }
+
     /// <summary>
     /// Contents of a single .locres file.
     /// </summary>
     public class LocRes
     {
+        private static byte[] MAGIC =
+        {
+            0x0E, 0x14, 0x74, 0x75, 0x67, 0x4A, 0x03, 0xFC,
+            0x4A, 0x15, 0x90, 0x9D, 0xC3, 0x37, 0x7F, 0x1B,
+            0x01
+        };
+
+        public LocResFormat Format;
+
         public IEnumerable<Table> Tables;
 
         public class Table
@@ -40,6 +56,36 @@ namespace lrx
 
         public static LocRes Read(Stream stream)
         {
+            var format = LocResFormat.Auto;
+            string[] strings = null;
+
+            var position = stream.Position;
+            var preamble = new byte[MAGIC.Length];
+            if (stream.Read(preamble, 0, preamble.Length) != preamble.Length)
+            {
+                throw new IOException();
+            }
+            if (Enumerable.SequenceEqual(MAGIC, preamble))
+            {
+                long offset = 0;
+                for (int i = 0; i < 64; i += 8)
+                {
+                    offset |= (long)stream.ReadByte() << i;
+                }
+                if (offset < 0) throw new FormatException();
+
+                stream.Position = offset;
+                strings = LoadStrings(stream);
+
+                stream.Position = position + MAGIC.Length + 8;
+                format = LocResFormat.New;
+            }
+            else
+            {
+                stream.Position = position;
+                format = LocResFormat.Old;
+            }
+
             using (var rd = new BinaryReader(stream, Encoding.Unicode, true))
             {
                 var table_count = rd.ReadInt32();
@@ -54,14 +100,28 @@ namespace lrx
                     {
                         var key = rd.ReadCString();
                         var hash = rd.ReadInt32();
-                        var text = rd.ReadCString();
+                        var text = strings == null ? rd.ReadCString() : strings[rd.ReadInt32()];
                         entries[n] = new Entry() { Key = key, Hash = hash, Text = text };
                     }
 
                     tables[t] = new Table() { Name = name, Entries = entries };
                 }
 
-                return new LocRes() { Tables = tables };
+                return new LocRes() { Tables = tables, Format = format };
+            }
+        }
+
+        private static string[] LoadStrings(Stream stream)
+        {
+            using (var rd = new BinaryReader(stream, Encoding.Unicode, true))
+            {
+                var string_count = rd.ReadInt32();
+                var strings = new string[string_count];
+                for (int i = 0; i < string_count; i++)
+                {
+                    strings[i] = rd.ReadCString();
+                }
+                return strings;
             }
         }
 
@@ -75,6 +135,47 @@ namespace lrx
 
         public void Save(Stream stream)
         {
+            switch (Format)
+            {
+                case LocResFormat.Auto:
+                case LocResFormat.Old:
+                    SaveTables(stream, null);
+                    break;
+                case LocResFormat.New:
+                    SaveNewFormat(stream);
+                    break;
+            }
+        }
+
+        private void SaveNewFormat(Stream stream)
+        {
+            stream.Write(MAGIC, 0, MAGIC.Length);
+            var coder = new StringCoder();
+
+            using (var memory = new MemoryStream())
+            {
+                SaveTables(memory, coder);
+                var offset = MAGIC.Length + 8 + memory.Length;
+                for (int i = 0; i < 64; i += 8)
+                {
+                    stream.WriteByte((byte)(offset >> i));
+                }
+                memory.WriteTo(stream);
+            }
+
+            var strings = coder.GetStringTable();
+            using (var wr = new BinaryWriter(stream))
+            {
+                wr.Write((Int32)strings.Length);
+                foreach (var s in strings)
+                {
+                    wr.WriteCString(s);
+                }
+            }
+        }
+
+        private void SaveTables(Stream stream, StringCoder coder)
+        {
             using (var wr = new BinaryWriter(stream, Encoding.Unicode, true))
             {
                 wr.Write((Int32)Tables.Count());
@@ -86,9 +187,39 @@ namespace lrx
                     {
                         wr.WriteCString(entry.Key);
                         wr.Write((Int32)entry.Hash);
-                        wr.WriteCString(entry.Text);
+                        if (coder == null)
+                        {
+                            wr.WriteCString(entry.Text);
+                        }
+                        else
+                        {
+                            wr.Write((Int32)coder.Encode(entry.Text));
+                        }
                     }
                 }
+            }
+        }
+
+        private class StringCoder
+        {
+            private readonly Dictionary<string, int> Pool = new Dictionary<string, int>();
+
+            public int Encode(string text)
+            {
+                int code;
+                if (Pool.TryGetValue(text, out code))
+                {
+                    return code;
+                }
+                else
+                {
+                    return Pool[text] = Pool.Count;
+                }
+            }
+
+            public string[] GetStringTable()
+            {
+                return Pool.OrderBy(p => p.Value).Select(p => p.Key).ToArray();
             }
         }
 
