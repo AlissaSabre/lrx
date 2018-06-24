@@ -17,6 +17,7 @@ namespace lrx
         {
             var xliff = XElement.Load(filename);
             if (xliff.Name != XLF.XLIFF) throw new IOException();
+            Xliff = xliff;
         }
 
         public LocRes Crunch()
