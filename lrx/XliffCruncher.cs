@@ -23,24 +23,24 @@ namespace lrx
         public LocRes Crunch()
         {
             LocResFormat format = LocResFormat.Auto;
-            switch ((string)Xliff.Element(X.FILE).Attribute("datatype"))
+            switch ((string)Xliff.Element(X.FILE).Attribute(X.DATATYPE))
             {
-                case "x-locres-0": format = LocResFormat.Old; break;
-                case "x-locres-1": format = LocResFormat.New; break;
+                case X.LOCRES_FORMAT_OLD: format = LocResFormat.Old; break;
+                case X.LOCRES_FORMAT_NEW: format = LocResFormat.New; break;
             }
 
-            var names = Xliff.Descendants(X.TU).Select(tu => GetContext(tu, "x-locres-namespace")).Distinct().ToArray();
+            var names = Xliff.Descendants(X.TU).Select(tu => GetContext(tu, X.LOCRES_NAME)).Distinct().ToArray();
             var tables = new List<LocRes.Table>(names.Length);
             foreach (var n in names)
             {
                 var entries = new List<LocRes.Entry>();
-                foreach (var tu in Xliff.Descendants(X.TU).Where(tu => GetContext(tu, "x-locres-namespace") == n))
+                foreach (var tu in Xliff.Descendants(X.TU).Where(tu => GetContext(tu, X.LOCRES_NAME) == n))
                 {
                     var text = (string)tu.Element(X.TARGET);
                     if (text == null) continue;
 
-                    var key = GetContext(tu, "x-locres-key");
-                    var hash_text = GetContext(tu, "x-locres-hash");
+                    var key = GetContext(tu, X.LOCRES_KEY);
+                    var hash_text = GetContext(tu, X.LOCRES_HASH);
                     if (key == null || hash_text == null) throw new FormatException();
                     int hash;
                     if (!int.TryParse(hash_text, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out hash))
@@ -64,7 +64,7 @@ namespace lrx
         /// <returns>Content string of a context element whose context-type matches <paramref name="context_type"/>, or null if no such context exists.</returns>
         private static string GetContext(XElement tu, string context_type)
         {
-            return (string)tu.Element(X.CGROUP)?.Elements(X.CONTEXT)?.FirstOrDefault(c => (string)c.Attribute("context-type") == context_type);
+            return (string)tu.Element(X.CGROUP)?.Elements(X.CONTEXT)?.FirstOrDefault(c => (string)c.Attribute(X.CTYPE) == context_type);
         }
     }
 }

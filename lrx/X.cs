@@ -36,6 +36,32 @@ namespace lrx
 
         public static readonly XName XSPACE = XNamespace.Xml + "space";
 
+        public static readonly XName DATATYPE = "datatype";
 
+        public static readonly XName ORIGINAL = "original";
+
+        public static readonly XName SOURCELANG = "source-language";
+
+        public static readonly XName TARGETLANG = "target-language";
+
+        public static readonly XName VERSION = "version";
+
+        public static readonly XName ID = "id";
+
+        public static readonly XName RESNAME = "resname";
+
+        public static readonly XName CTYPE = "context-type";
+
+        public const string PRESERVE = "preserve";
+
+        public const string LOCRES_NAME = "x-locres-namespace";
+
+        public const string LOCRES_KEY = "x-locres-key";
+
+        public const string LOCRES_HASH = "x-locres-hash";
+
+        public const string LOCRES_FORMAT_OLD = "x-locres-0";
+
+        public const string LOCRES_FORMAT_NEW = "x-locres-1";
     }
 }
