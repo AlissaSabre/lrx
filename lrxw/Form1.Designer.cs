@@ -39,7 +39,7 @@
             this.targetLocRes = new System.Windows.Forms.TextBox();
             this.targetButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.xliff = new System.Windows.Forms.TextBox();
+            this.xliffPath = new System.Windows.Forms.TextBox();
             this.xliffButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.sourceLang = new System.Windows.Forms.TextBox();
@@ -172,14 +172,14 @@
             this.label4.Tag = "IAE";
             this.label4.Text = "XLIFF:";
             // 
-            // xliff
+            // xliffPath
             // 
-            this.xliff.Location = new System.Drawing.Point(42, 260);
-            this.xliff.Name = "xliff";
-            this.xliff.ReadOnly = true;
-            this.xliff.Size = new System.Drawing.Size(486, 25);
-            this.xliff.TabIndex = 15;
-            this.xliff.Tag = "IAE";
+            this.xliffPath.Location = new System.Drawing.Point(42, 260);
+            this.xliffPath.Name = "xliffPath";
+            this.xliffPath.ReadOnly = true;
+            this.xliffPath.Size = new System.Drawing.Size(486, 25);
+            this.xliffPath.TabIndex = 15;
+            this.xliffPath.Tag = "IAE";
             // 
             // xliffButton
             // 
@@ -313,7 +313,7 @@
             this.Controls.Add(this.sourceLang);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.xliffButton);
-            this.Controls.Add(this.xliff);
+            this.Controls.Add(this.xliffPath);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.targetButton);
             this.Controls.Add(this.targetLocRes);
@@ -345,7 +345,7 @@
         private System.Windows.Forms.TextBox targetLocRes;
         private System.Windows.Forms.Button targetButton;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox xliff;
+        private System.Windows.Forms.TextBox xliffPath;
         private System.Windows.Forms.Button xliffButton;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox sourceLang;

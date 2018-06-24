@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using lrx;
+
 namespace lrxw
 {
     public partial class Form1 : Form
@@ -48,13 +50,13 @@ namespace lrxw
             switch (Mode)
             {
                 case OperationMode.Import:
-                    mandatory = new[] { sourceLocRes, xliff, sourceLang, targetLang };
+                    mandatory = new[] { sourceLocRes, xliffPath, sourceLang, targetLang };
                     break;
                 case OperationMode.Align:
-                    mandatory = new[] { sourceLocRes, targetLocRes, xliff, sourceLang, targetLang };
+                    mandatory = new[] { sourceLocRes, targetLocRes, xliffPath, sourceLang, targetLang };
                     break;
                 case OperationMode.Export:
-                    mandatory = new[] { targetLocRes, xliff };
+                    mandatory = new[] { targetLocRes, xliffPath };
                     break;
                 default:
                     ImpossibleCondition();
@@ -117,10 +119,10 @@ namespace lrxw
             {
                 case OperationMode.Import:
                 case OperationMode.Align:
-                    handleFileDialog(xliffSaveDialog, xliff);
+                    handleFileDialog(xliffSaveDialog, xliffPath);
                     break;
                 case OperationMode.Export:
-                    handleFileDialog(xliffOpenDialog, xliff);
+                    handleFileDialog(xliffOpenDialog, xliffPath);
                     break;
                 default:
                     ImpossibleCondition();
@@ -139,19 +141,18 @@ namespace lrxw
 
         private async void runButton_Click(object sender, EventArgs e)
         {
-            string[] args = null;
-            switch (Mode)
+            var source_locres = sourceLocRes.Text;
+            var target_locres = targetLocRes.Text;
+            var xliff_path = xliffPath.Text;
+            var slang = sourceLang.Text;
+            var tlang = targetLang.Text;
+
+            LocResFormat format = LocResFormat.Auto;
+            switch (locResFormat.SelectedIndex)
             {
-                case OperationMode.Import:
-                    args = new[] { "-i", "-s", sourceLang.Text, "-t", targetLang.Text, sourceLocRes.Text, xliff.Text, };
-                    break;
-                case OperationMode.Align:
-                    args = new[] { "-a", "-s", sourceLang.Text, "-t", targetLang.Text, sourceLocRes.Text, targetLocRes.Text, xliff.Text };
-                    break;
-                case OperationMode.Export:
-                    var format = new[] { "auto", "0", "1" }[locResFormat.SelectedIndex];
-                    args = new[] { "-e", "-f", format, xliff.Text, targetLocRes.Text };
-                    break;
+                case 0: format = LocResFormat.Auto; break;
+                case 1: format = LocResFormat.Old; break;
+                case 2: format = LocResFormat.New; break;
                 default:
                     ImpossibleCondition();
                     break;
@@ -159,7 +160,26 @@ namespace lrxw
 
             UseWaitCursor = true;
             Cursor.Current = Cursors.WaitCursor;
-            await Task.Run(() => lrx.Program.Main(args));
+
+            await Task.Run(() =>
+            {
+                switch (Mode)
+                {
+                    case OperationMode.Import:
+                        Converter.Import(source_locres, xliff_path, slang, tlang);
+                        break;
+                    case OperationMode.Align:
+                        Converter.Align(source_locres, target_locres, xliff_path, slang, tlang);
+                        break;
+                    case OperationMode.Export:
+                        Converter.Export(xliff_path, target_locres, format);
+                        break;
+                    default:
+                        ImpossibleCondition();
+                        break;
+                }
+            });
+
             UseWaitCursor = false;
             Cursor.Current = Cursors.Default;
         }

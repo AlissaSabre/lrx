@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace lrx
 {
-    public class Program
+    class Program
     {
-        public static void Main(string[] args)
+        static void Main(string[] args)
         {
-            System.Threading.Thread.Sleep(3000);
+            
         }
     }
 }
