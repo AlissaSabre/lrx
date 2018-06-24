@@ -17,17 +17,43 @@ namespace lrx
     {
         public static void Import(string sourceLocRes, string outputXliff, string sourceLang, string targetLang)
         {
-            throw new NotImplementedException();
+            var locres = LocRes.Read(sourceLocRes);
+            var builder = new XliffBuilder() { SourceLang = sourceLang, TargetLang = targetLang, Origin = sourceLocRes };
+            foreach (var table in locres.Tables)
+            {
+                foreach (var entry in table.Entries)
+                {
+                    builder.Add(table.Name, entry.Key, entry.Hash, entry.Text, null);
+                }
+            }
+            var xliff = builder.GetDocument();
+            xliff.Save(outputXliff);
         }
 
         public static void Align(string sourceLocRes, string targetLocRes, string outputXliff, string sourceLang, string targetLang)
         {
-            throw new NotImplementedException();
+            var source = LocRes.Read(sourceLocRes);
+            var target = LocRes.Read(targetLocRes);
+            var builder = new XliffBuilder() { SourceLang = sourceLang, TargetLang = targetLang, Origin = sourceLocRes };
+            foreach (var table in source.Tables)
+            {
+                foreach (var entry in table.Entries)
+                {
+                    string target_text;
+                    target.Lookup(table.Name, entry.Key, entry.Hash, out target_text);
+                    builder.Add(table.Name, entry.Key, entry.Hash, entry.Text, target_text);
+                }
+            }
+            var xliff = builder.GetDocument();
+            xliff.Save(outputXliff);
         }
 
         public static void Export(string inputXliff, string outputLocRes, LocResFormat format)
         {
-            throw new NotImplementedException();
+            var cruncher = new XliffCruncher();
+            cruncher.Read(inputXliff);
+            var locres = cruncher.Crunch();
+            locres.Save(outputLocRes);
         }
     }
 }
