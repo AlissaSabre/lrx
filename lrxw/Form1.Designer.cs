@@ -29,25 +29,33 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
-            this.radioButton2 = new System.Windows.Forms.RadioButton();
-            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.importRadio = new System.Windows.Forms.RadioButton();
+            this.alignRadio = new System.Windows.Forms.RadioButton();
+            this.exportRadio = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.sourceLocRes = new System.Windows.Forms.TextBox();
+            this.sourceButton = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.button2 = new System.Windows.Forms.Button();
+            this.targetLocRes = new System.Windows.Forms.TextBox();
+            this.targetButton = new System.Windows.Forms.Button();
             this.label4 = new System.Windows.Forms.Label();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.button3 = new System.Windows.Forms.Button();
+            this.xliff = new System.Windows.Forms.TextBox();
+            this.xliffButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBox5 = new System.Windows.Forms.TextBox();
+            this.sourceLang = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.textBox6 = new System.Windows.Forms.TextBox();
+            this.targetLang = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.button4 = new System.Windows.Forms.Button();
+            this.locResFormat = new System.Windows.Forms.ComboBox();
+            this.runButton = new System.Windows.Forms.Button();
+            this.sourceOpenDialog = new System.Windows.Forms.OpenFileDialog();
+            this.targetOpenDialog = new System.Windows.Forms.OpenFileDialog();
+            this.sourceSaveDialog = new System.Windows.Forms.SaveFileDialog();
+            this.targetSaveDialog = new System.Windows.Forms.SaveFileDialog();
+            this.xliffOpenDialog = new System.Windows.Forms.OpenFileDialog();
+            this.xliffSaveDialog = new System.Windows.Forms.SaveFileDialog();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -59,37 +67,40 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "Operation:";
             // 
-            // radioButton1
+            // importRadio
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Checked = true;
-            this.radioButton1.Location = new System.Drawing.Point(42, 58);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(310, 21);
-            this.radioButton1.TabIndex = 5;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "Import one LocRes (of source language) to XLIFF";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.importRadio.AutoSize = true;
+            this.importRadio.Checked = true;
+            this.importRadio.Location = new System.Drawing.Point(30, 3);
+            this.importRadio.Name = "importRadio";
+            this.importRadio.Size = new System.Drawing.Size(310, 21);
+            this.importRadio.TabIndex = 5;
+            this.importRadio.TabStop = true;
+            this.importRadio.Text = "Import one LocRes (of source language) to XLIFF";
+            this.importRadio.UseVisualStyleBackColor = true;
+            this.importRadio.CheckedChanged += new System.EventHandler(this.operation_CheckedChanged);
             // 
-            // radioButton2
+            // alignRadio
             // 
-            this.radioButton2.AutoSize = true;
-            this.radioButton2.Location = new System.Drawing.Point(42, 85);
-            this.radioButton2.Name = "radioButton2";
-            this.radioButton2.Size = new System.Drawing.Size(359, 21);
-            this.radioButton2.TabIndex = 6;
-            this.radioButton2.Text = "Align and import two LocRes (source and target) to XLIFF";
-            this.radioButton2.UseVisualStyleBackColor = true;
+            this.alignRadio.AutoSize = true;
+            this.alignRadio.Location = new System.Drawing.Point(30, 30);
+            this.alignRadio.Name = "alignRadio";
+            this.alignRadio.Size = new System.Drawing.Size(359, 21);
+            this.alignRadio.TabIndex = 6;
+            this.alignRadio.Text = "Align and import two LocRes (source and target) to XLIFF";
+            this.alignRadio.UseVisualStyleBackColor = true;
+            this.alignRadio.CheckedChanged += new System.EventHandler(this.operation_CheckedChanged);
             // 
-            // radioButton3
+            // exportRadio
             // 
-            this.radioButton3.AutoSize = true;
-            this.radioButton3.Location = new System.Drawing.Point(42, 112);
-            this.radioButton3.Name = "radioButton3";
-            this.radioButton3.Size = new System.Drawing.Size(231, 21);
-            this.radioButton3.TabIndex = 7;
-            this.radioButton3.Text = "Export translated XLIFF to a LocRes";
-            this.radioButton3.UseVisualStyleBackColor = true;
+            this.exportRadio.AutoSize = true;
+            this.exportRadio.Location = new System.Drawing.Point(30, 57);
+            this.exportRadio.Name = "exportRadio";
+            this.exportRadio.Size = new System.Drawing.Size(231, 21);
+            this.exportRadio.TabIndex = 7;
+            this.exportRadio.Text = "Export translated XLIFF to a LocRes";
+            this.exportRadio.UseVisualStyleBackColor = true;
+            this.exportRadio.CheckedChanged += new System.EventHandler(this.operation_CheckedChanged);
             // 
             // label2
             // 
@@ -98,23 +109,28 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(96, 17);
             this.label2.TabIndex = 8;
+            this.label2.Tag = "IA";
             this.label2.Text = "Source LocRes:";
             // 
-            // textBox2
+            // sourceLocRes
             // 
-            this.textBox2.Location = new System.Drawing.Point(42, 164);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(486, 25);
-            this.textBox2.TabIndex = 9;
+            this.sourceLocRes.Location = new System.Drawing.Point(42, 164);
+            this.sourceLocRes.Name = "sourceLocRes";
+            this.sourceLocRes.ReadOnly = true;
+            this.sourceLocRes.Size = new System.Drawing.Size(486, 25);
+            this.sourceLocRes.TabIndex = 9;
+            this.sourceLocRes.Tag = "IA";
             // 
-            // button1
+            // sourceButton
             // 
-            this.button1.Location = new System.Drawing.Point(534, 164);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(40, 23);
-            this.button1.TabIndex = 10;
-            this.button1.Text = "...";
-            this.button1.UseVisualStyleBackColor = true;
+            this.sourceButton.Location = new System.Drawing.Point(534, 164);
+            this.sourceButton.Name = "sourceButton";
+            this.sourceButton.Size = new System.Drawing.Size(40, 23);
+            this.sourceButton.TabIndex = 10;
+            this.sourceButton.Tag = "IA";
+            this.sourceButton.Text = "...";
+            this.sourceButton.UseVisualStyleBackColor = true;
+            this.sourceButton.Click += new System.EventHandler(this.sourceButton_Click);
             // 
             // label3
             // 
@@ -123,23 +139,28 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(93, 17);
             this.label3.TabIndex = 11;
+            this.label3.Tag = "AE";
             this.label3.Text = "Target LocRes:";
             // 
-            // textBox3
+            // targetLocRes
             // 
-            this.textBox3.Location = new System.Drawing.Point(42, 212);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(486, 25);
-            this.textBox3.TabIndex = 12;
+            this.targetLocRes.Location = new System.Drawing.Point(42, 212);
+            this.targetLocRes.Name = "targetLocRes";
+            this.targetLocRes.ReadOnly = true;
+            this.targetLocRes.Size = new System.Drawing.Size(486, 25);
+            this.targetLocRes.TabIndex = 12;
+            this.targetLocRes.Tag = "AE";
             // 
-            // button2
+            // targetButton
             // 
-            this.button2.Location = new System.Drawing.Point(534, 212);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(40, 23);
-            this.button2.TabIndex = 13;
-            this.button2.Text = "...";
-            this.button2.UseVisualStyleBackColor = true;
+            this.targetButton.Location = new System.Drawing.Point(534, 212);
+            this.targetButton.Name = "targetButton";
+            this.targetButton.Size = new System.Drawing.Size(40, 23);
+            this.targetButton.TabIndex = 13;
+            this.targetButton.Tag = "AE";
+            this.targetButton.Text = "...";
+            this.targetButton.UseVisualStyleBackColor = true;
+            this.targetButton.Click += new System.EventHandler(this.targetButton_Click);
             // 
             // label4
             // 
@@ -148,23 +169,28 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(40, 17);
             this.label4.TabIndex = 14;
+            this.label4.Tag = "IAE";
             this.label4.Text = "XLIFF:";
             // 
-            // textBox4
+            // xliff
             // 
-            this.textBox4.Location = new System.Drawing.Point(42, 260);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(486, 25);
-            this.textBox4.TabIndex = 15;
+            this.xliff.Location = new System.Drawing.Point(42, 260);
+            this.xliff.Name = "xliff";
+            this.xliff.ReadOnly = true;
+            this.xliff.Size = new System.Drawing.Size(486, 25);
+            this.xliff.TabIndex = 15;
+            this.xliff.Tag = "IAE";
             // 
-            // button3
+            // xliffButton
             // 
-            this.button3.Location = new System.Drawing.Point(534, 260);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(40, 23);
-            this.button3.TabIndex = 16;
-            this.button3.Text = "...";
-            this.button3.UseVisualStyleBackColor = true;
+            this.xliffButton.Location = new System.Drawing.Point(534, 260);
+            this.xliffButton.Name = "xliffButton";
+            this.xliffButton.Size = new System.Drawing.Size(40, 23);
+            this.xliffButton.TabIndex = 16;
+            this.xliffButton.Tag = "IAE";
+            this.xliffButton.Text = "...";
+            this.xliffButton.UseVisualStyleBackColor = true;
+            this.xliffButton.Click += new System.EventHandler(this.xliffButton_Click);
             // 
             // label5
             // 
@@ -173,14 +199,16 @@
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(142, 17);
             this.label5.TabIndex = 17;
+            this.label5.Tag = "IA";
             this.label5.Text = "Source language code:";
             // 
-            // textBox5
+            // sourceLang
             // 
-            this.textBox5.Location = new System.Drawing.Point(64, 308);
-            this.textBox5.Name = "textBox5";
-            this.textBox5.Size = new System.Drawing.Size(100, 25);
-            this.textBox5.TabIndex = 18;
+            this.sourceLang.Location = new System.Drawing.Point(64, 308);
+            this.sourceLang.Name = "sourceLang";
+            this.sourceLang.Size = new System.Drawing.Size(100, 25);
+            this.sourceLang.TabIndex = 18;
+            this.sourceLang.Tag = "IA";
             // 
             // label6
             // 
@@ -189,14 +217,16 @@
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(139, 17);
             this.label6.TabIndex = 19;
+            this.label6.Tag = "IA";
             this.label6.Text = "Target language code:";
             // 
-            // textBox6
+            // targetLang
             // 
-            this.textBox6.Location = new System.Drawing.Point(64, 356);
-            this.textBox6.Name = "textBox6";
-            this.textBox6.Size = new System.Drawing.Size(100, 25);
-            this.textBox6.TabIndex = 20;
+            this.targetLang.Location = new System.Drawing.Point(64, 356);
+            this.targetLang.Name = "targetLang";
+            this.targetLang.Size = new System.Drawing.Size(100, 25);
+            this.targetLang.TabIndex = 20;
+            this.targetLang.Tag = "IA";
             // 
             // label7
             // 
@@ -205,58 +235,99 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(95, 17);
             this.label7.TabIndex = 21;
+            this.label7.Tag = "E";
             this.label7.Text = "LocRes format:";
             // 
-            // comboBox1
+            // locResFormat
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.locResFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.locResFormat.Items.AddRange(new object[] {
             "Default",
             "Force old format",
             "Force new format"});
-            this.comboBox1.Location = new System.Drawing.Point(42, 412);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(486, 25);
-            this.comboBox1.TabIndex = 22;
+            this.locResFormat.Location = new System.Drawing.Point(42, 412);
+            this.locResFormat.Name = "locResFormat";
+            this.locResFormat.Size = new System.Drawing.Size(486, 25);
+            this.locResFormat.TabIndex = 22;
+            this.locResFormat.Tag = "E";
             // 
-            // button4
+            // runButton
             // 
-            this.button4.Location = new System.Drawing.Point(497, 476);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 23;
-            this.button4.Text = "Run";
-            this.button4.UseVisualStyleBackColor = true;
+            this.runButton.Location = new System.Drawing.Point(497, 476);
+            this.runButton.Name = "runButton";
+            this.runButton.Size = new System.Drawing.Size(75, 23);
+            this.runButton.TabIndex = 23;
+            this.runButton.Text = "Run";
+            this.runButton.UseVisualStyleBackColor = true;
+            this.runButton.Click += new System.EventHandler(this.runButton_Click);
+            // 
+            // sourceOpenDialog
+            // 
+            this.sourceOpenDialog.Filter = "LocRes|*.locres";
+            // 
+            // targetOpenDialog
+            // 
+            this.targetOpenDialog.Filter = "LocRes|*.locres";
+            // 
+            // sourceSaveDialog
+            // 
+            this.sourceSaveDialog.DefaultExt = "locres";
+            this.sourceSaveDialog.Filter = "LocRes|*.locres";
+            // 
+            // targetSaveDialog
+            // 
+            this.targetSaveDialog.DefaultExt = "locres";
+            this.targetSaveDialog.Filter = "LocRes|*.locres";
+            // 
+            // xliffOpenDialog
+            // 
+            this.xliffOpenDialog.Filter = "XLIFF|*.xliff";
+            // 
+            // xliffSaveDialog
+            // 
+            this.xliffSaveDialog.DefaultExt = "xliff";
+            this.xliffSaveDialog.Filter = "XLIFF|*.xliff";
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.importRadio);
+            this.panel1.Controls.Add(this.alignRadio);
+            this.panel1.Controls.Add(this.exportRadio);
+            this.panel1.Location = new System.Drawing.Point(12, 58);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(560, 83);
+            this.panel1.TabIndex = 24;
             // 
             // Form1
             // 
+            this.AcceptButton = this.runButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 511);
-            this.Controls.Add(this.button4);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.runButton);
+            this.Controls.Add(this.locResFormat);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.textBox6);
+            this.Controls.Add(this.targetLang);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.textBox5);
+            this.Controls.Add(this.sourceLang);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.xliffButton);
+            this.Controls.Add(this.xliff);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.targetButton);
+            this.Controls.Add(this.targetLocRes);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.button1);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.sourceButton);
+            this.Controls.Add(this.sourceLocRes);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.radioButton3);
-            this.Controls.Add(this.radioButton2);
-            this.Controls.Add(this.radioButton1);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form1";
             this.Text = "lrxw";
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -264,25 +335,32 @@
 
         #endregion
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.RadioButton radioButton1;
-        private System.Windows.Forms.RadioButton radioButton2;
-        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton importRadio;
+        private System.Windows.Forms.RadioButton alignRadio;
+        private System.Windows.Forms.RadioButton exportRadio;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox sourceLocRes;
+        private System.Windows.Forms.Button sourceButton;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBox3;
-        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.TextBox targetLocRes;
+        private System.Windows.Forms.Button targetButton;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox textBox4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.TextBox xliff;
+        private System.Windows.Forms.Button xliffButton;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox textBox5;
+        private System.Windows.Forms.TextBox sourceLang;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox textBox6;
+        private System.Windows.Forms.TextBox targetLang;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.ComboBox locResFormat;
+        private System.Windows.Forms.Button runButton;
+        private System.Windows.Forms.OpenFileDialog sourceOpenDialog;
+        private System.Windows.Forms.OpenFileDialog targetOpenDialog;
+        private System.Windows.Forms.SaveFileDialog sourceSaveDialog;
+        private System.Windows.Forms.SaveFileDialog targetSaveDialog;
+        private System.Windows.Forms.OpenFileDialog xliffOpenDialog;
+        private System.Windows.Forms.SaveFileDialog xliffSaveDialog;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 
