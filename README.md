@@ -24,3 +24,29 @@ XLIFF is supported by most (if not all) of modern CAT (Computer Aided Translatio
 ## Status
 
 The basic functions of lrx and lrxw are now working.
+
+## Credits and Legalization
+
+lrx is written by Alissa Sabre specifically based on the knowledges aquired through:
+* XLIFF Version 1.2 specification (http://docs.oasis-open.org/xliff/v1.2/os/xliff-core.html)
+* Text tool by swuforce, available on https://zenhax.com/viewtopic.php?t=1022 
+* Unreal Engine 4 source code (Available for free of charge but not publicly.  See https://docs.unrealengine.com/en-us/GettingStarted/DownloadingUnrealEngine)
+
+lrx depends on some third party software.  In particular, it depends on:
+* [Mono.Options](https://github.com/xamarin/XamarinComponents/tree/master/XPlat/Mono.Options) nuget package.
+
+Their mandate legalese follow:
+
+### Xamarin Component for Mono.Options
+
+**The MIT License (MIT)**
+
+Copyright (c) .NET Foundation Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+20170421
