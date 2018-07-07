@@ -242,7 +242,7 @@
             // 
             this.locResFormat.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.locResFormat.Items.AddRange(new object[] {
-            "Default",
+            "Default (auto)",
             "Force old format",
             "Force new format"});
             this.locResFormat.Location = new System.Drawing.Point(42, 412);

@@ -139,7 +139,7 @@ namespace lrxw
             }
         }
 
-        private async void runButton_Click(object sender, EventArgs e)
+        private async void runButton_Click(object sender, EventArgs ev)
         {
             var source_locres = sourceLocRes.Text;
             var target_locres = targetLocRes.Text;
@@ -161,24 +161,32 @@ namespace lrxw
             UseWaitCursor = true;
             Cursor.Current = Cursors.WaitCursor;
 
-            await Task.Run(() =>
+            try
             {
-                switch (Mode)
+                await Task.Run(() =>
                 {
-                    case OperationMode.Import:
-                        Converter.Import(source_locres, xliff_path, slang, tlang);
-                        break;
-                    case OperationMode.Align:
-                        Converter.Align(source_locres, target_locres, xliff_path, slang, tlang);
-                        break;
-                    case OperationMode.Export:
-                        Converter.Export(xliff_path, target_locres, format);
-                        break;
-                    default:
-                        ImpossibleCondition();
-                        break;
-                }
-            });
+                    switch (Mode)
+                    {
+                        case OperationMode.Import:
+                            Converter.Import(source_locres, xliff_path, slang, tlang);
+                            break;
+                        case OperationMode.Align:
+                            Converter.Align(source_locres, target_locres, xliff_path, slang, tlang);
+                            break;
+                        case OperationMode.Export:
+                            Converter.Export(xliff_path, target_locres, format);
+                            break;
+                        default:
+                            ImpossibleCondition();
+                            break;
+                    }
+                });
+                MessageBox.Show(this, "Done.", "lrxw");
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(this, string.Format("Error: {0}", e.Message), "Exception - lrxw");
+            }
 
             UseWaitCursor = false;
             Cursor.Current = Cursors.Default;
