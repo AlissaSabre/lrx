@@ -52,16 +52,34 @@ namespace lrx
 
         public static readonly XName CTYPE = "context-type";
 
+        /// <summary>
+        /// An @xml:space value.
+        /// </summary>
         public const string PRESERVE = "preserve";
 
+        /// <summary>
+        /// A context/@context-type value for LocRes namespace.
+        /// </summary>
         public const string LOCRES_NAME = "x-locres-namespace";
 
+        /// <summary>
+        /// A context/@context-type value for LocRes key.
+        /// </summary>
         public const string LOCRES_KEY = "x-locres-key";
 
+        /// <summary>
+        /// A context/@context-type value for LocRes source hash.
+        /// </summary>
         public const string LOCRES_HASH = "x-locres-hash";
 
+        /// <summary>
+        /// A file/@datatype value to indicate an older LocRes format.
+        /// </summary>
         public const string LOCRES_FORMAT_OLD = "x-locres-0";
 
+        /// <summary>
+        /// A file/@datatype value to indicate a newer LocRes format.
+        /// </summary>
         public const string LOCRES_FORMAT_NEW = "x-locres-1";
     }
 }

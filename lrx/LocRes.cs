@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace lrx
 {
+    /// <summary>
+    /// Format of LocRes file.
+    /// </summary>
     public enum LocResFormat
     {
         Auto,
@@ -15,10 +18,13 @@ namespace lrx
     }
 
     /// <summary>
-    /// Contents of a single .locres file.
+    /// Contents of a single .locres file (LocRes infoset).
     /// </summary>
     public class LocRes
     {
+        /// <summary>
+        /// Magic number at the beginning of a newer format.
+        /// </summary>
         private static byte[] MAGIC =
         {
             0x0E, 0x14, 0x74, 0x75, 0x67, 0x4A, 0x03, 0xFC,
@@ -26,26 +32,58 @@ namespace lrx
             0x01
         };
 
+        /// <summary>
+        /// LocRes file format.
+        /// </summary>
         public LocResFormat Format;
 
+        /// <summary>
+        /// Series of namespace tables.
+        /// </summary>
         public IEnumerable<Table> Tables;
 
+        /// <summary>
+        /// A namespace table.
+        /// </summary>
         public class Table
         {
+            /// <summary>
+            /// Namespace name.
+            /// </summary>
             public string Name;
 
+            /// <summary>
+            /// Series of entries in this namespace.
+            /// </summary>
             public IEnumerable<Entry> Entries;
         }
 
+        /// <summary>
+        /// A text entry.
+        /// </summary>
         public class Entry
         {
+            /// <summary>
+            /// Text key.
+            /// </summary>
             public string Key;
 
+            /// <summary>
+            /// Source text hash.
+            /// </summary>
             public int Hash;
 
+            /// <summary>
+            /// Text.
+            /// </summary>
             public string Text;
         }
 
+        /// <summary>
+        /// Reads the contents of a LocRes file.
+        /// </summary>
+        /// <param name="filename">Path name to the LocRes file.</param>
+        /// <returns>LocRes infoset.</returns>
         public static LocRes Read(string filename)
         {
             using (var stream = File.OpenRead(filename))
@@ -54,11 +92,17 @@ namespace lrx
             }
         }
 
+        /// <summary>
+        /// Reads the contents of a LocRes stream.
+        /// </summary>
+        /// <param name="stream">Stream to read LocRes from.  It must be <see cref="Stream.CanSeek"/>.</param>
+        /// <returns>LocRes infoset.</returns>
         public static LocRes Read(Stream stream)
         {
-            var format = LocResFormat.Auto;
+            var format = LocResFormat.Old;
             string[] strings = null;
 
+            // See if this is in a newer format.
             var position = stream.Position;
             var preamble = new byte[MAGIC.Length];
             if (stream.Read(preamble, 0, preamble.Length) != preamble.Length)
@@ -67,25 +111,25 @@ namespace lrx
             }
             if (Enumerable.SequenceEqual(MAGIC, preamble))
             {
+                // This is a newer format LocRes.
+
                 long offset = 0;
                 for (int i = 0; i < 64; i += 8)
                 {
                     offset |= (long)stream.ReadByte() << i;
                 }
-                if (offset < 0) throw new FormatException();
+                if (offset < 0) throw new FormatException("Invalid string table offset.");
 
+                position = stream.Position;
                 stream.Position = offset;
                 strings = LoadStrings(stream);
-
-                stream.Position = position + MAGIC.Length + 8;
                 format = LocResFormat.New;
             }
-            else
-            {
-                stream.Position = position;
-                format = LocResFormat.Old;
-            }
 
+            // Seek back to the beginning of tables.
+            stream.Position = position;
+
+            // Read the tables.
             using (var rd = new BinaryReader(stream, Encoding.Unicode, true))
             {
                 var table_count = rd.ReadInt32();
@@ -111,6 +155,11 @@ namespace lrx
             }
         }
 
+        /// <summary>
+        /// Loads the string pool from LocRes at the current position.
+        /// </summary>
+        /// <param name="stream">Stream to read the string pool from.</param>
+        /// <returns>String pool.</returns>
         private static string[] LoadStrings(Stream stream)
         {
             using (var rd = new BinaryReader(stream, Encoding.Unicode, true))
@@ -125,6 +174,10 @@ namespace lrx
             }
         }
 
+        /// <summary>
+        /// Saves this LocRes infoset into a file.
+        /// </summary>
+        /// <param name="filename">Path name.</param>
         public void Save(string filename)
         {
             using (var stream = File.OpenWrite(filename))
@@ -133,13 +186,17 @@ namespace lrx
             }
         }
 
+        /// <summary>
+        /// Saves this LocRes infoset into a Stream.
+        /// </summary>
+        /// <param name="stream">Stream to save infoset into.</param>
         public void Save(Stream stream)
         {
             switch (Format)
             {
                 case LocResFormat.Auto:
                 case LocResFormat.Old:
-                    SaveTables(stream, null);
+                    SaveOldFormat(stream);
                     break;
                 case LocResFormat.New:
                     SaveNewFormat(stream);
@@ -147,15 +204,21 @@ namespace lrx
             }
         }
 
+        private void SaveOldFormat(Stream stream)
+        {
+            SaveTables(stream, null);
+        }
+
         private void SaveNewFormat(Stream stream)
         {
             stream.Write(MAGIC, 0, MAGIC.Length);
+
             var coder = new StringCoder();
 
             using (var memory = new MemoryStream())
             {
                 SaveTables(memory, coder);
-                var offset = MAGIC.Length + 8 + memory.Length;
+                long offset = MAGIC.Length + 8 + memory.Length;
                 for (int i = 0; i < 64; i += 8)
                 {
                     stream.WriteByte((byte)(offset >> i));
@@ -200,10 +263,18 @@ namespace lrx
             }
         }
 
+        /// <summary>
+        /// Maps a string to an index in a LocRes string pool, at the same time constructing the pool.
+        /// </summary>
         private class StringCoder
         {
             private readonly Dictionary<string, int> Pool = new Dictionary<string, int>();
 
+            /// <summary>
+            /// Get an index for a string, possibly adding it into the pool.
+            /// </summary>
+            /// <param name="text">A string.</param>
+            /// <returns>An index.</returns>
             public int Encode(string text)
             {
                 int code;
@@ -217,6 +288,10 @@ namespace lrx
                 }
             }
 
+            /// <summary>
+            /// Get the string pool as an array.
+            /// </summary>
+            /// <returns></returns>
             public string[] GetStringTable()
             {
                 return Pool.OrderBy(p => p.Value).Select(p => p.Key).ToArray();
@@ -226,13 +301,13 @@ namespace lrx
         private Dictionary<Tuple<string, string, int>, string> LookupTable;
 
         /// <summary>
-        /// Looks up a matching entry in this LocRes pool.
+        /// Looks up an entry in this LocRes pool.
         /// </summary>
         /// <param name="name">Namespace name.</param>
         /// <param name="key">Key value.</param>
         /// <param name="hash">Hash value.</param>
-        /// <param name="text">Returns the text from a matching entry.</param>
-        /// <returns>True if found.</returns>
+        /// <param name="text">The text if found.  Null otherwise.</param>
+        /// <returns>True if found.  False otherwise.</returns>
         public bool Lookup(string name, string key, int hash, out string text)
         {
             if (LookupTable == null)
@@ -252,12 +327,20 @@ namespace lrx
         }
     }
 
+    /// <summary>
+    /// A set of extension methods to read/write a string in a LocRes serialization from/to a BinaryReader/BinaryWriter.
+    /// </summary>
     public static class ExtensionMethods
     {
+        /// <summary>
+        /// Reads a LocRes-serialized string from a <see cref="BinaryReader"/>.
+        /// </summary>
+        /// <param name="rd">BinaryReader to read a string from.</param>
+        /// <returns>The string.  It may be null.</returns>
         public static string ReadCString(this BinaryReader rd)
         {
             var size = rd.ReadInt32();
-            if (size > 0) throw new FormatException();
+            if (size > 0) throw new FormatException("Invalid length.");
             if (size == 0) return null;
             size = -size - 1;
             var array = new char[size];
@@ -265,10 +348,15 @@ namespace lrx
             {
                 array[i] = (char)rd.ReadUInt16();
             }
-            if (rd.ReadUInt16() != 0) throw new FormatException();
+            if (rd.ReadUInt16() != 0) throw new FormatException("No terminating NUL.");
             return new String(array);
         }
 
+        /// <summary>
+        /// Writes a string into a <see cref="BinaryWriter"/> in LocRes serialization.
+        /// </summary>
+        /// <param name="wr">BinaryWriter to write a string into.</param>
+        /// <param name="text">The string.  It can be null.</param>
         public static void WriteCString(this BinaryWriter wr, string text)
         {
             if (text == null)
@@ -277,7 +365,7 @@ namespace lrx
             }
             else
             {
-                wr.Write((Int32)(-text.Length - 1));
+                wr.Write((Int32)(-(text.Length + 1)));
                 foreach (var c in text)
                 {
                     wr.Write((UInt16)c);

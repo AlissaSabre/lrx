@@ -16,7 +16,7 @@ namespace lrx
             {
                 foreach (var entry in table.Entries)
                 {
-                    builder.Add(table.Name, entry.Key, entry.Hash, entry.Text, null);
+                    builder.Add(table.Name, entry.Key, entry.Hash, entry.Text);
                 }
             }
             var xliff = builder.GetDocument();
