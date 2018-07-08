@@ -140,20 +140,10 @@ namespace lrxw
                 text.Text = dialog.FileName;
                 if (lang != null && string.IsNullOrWhiteSpace(lang.Text))
                 {
-                    var f = Path.GetFileName(Path.GetDirectoryName(dialog.FileName));
-                    if (!string.IsNullOrWhiteSpace(f))
+                    var f = GetLangCodeFromPath(dialog.FileName);
+                    if (f != null)
                     {
-                        bool found = false;
-                        try
-                        {
-                            CultureInfo.GetCultureInfo(f);
-                            found = true;
-                        }
-                        catch (ArgumentException) { }
-                        if (found)
-                        {
-                            lang.Text = f;
-                        }
+                        lang.Text = f;
                     }
                 }
             }
