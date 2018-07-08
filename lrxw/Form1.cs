@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -89,7 +91,7 @@ namespace lrxw
             {
                 case OperationMode.Import:
                 case OperationMode.Align:
-                    handleFileDialog(sourceOpenDialog, sourceLocRes);
+                    handleFileDialog(sourceOpenDialog, sourceLocRes, sourceLang);
                     break;
                 default:
                     ImpossibleCondition();
@@ -102,7 +104,7 @@ namespace lrxw
             switch (Mode)
             {
                 case OperationMode.Align:
-                    handleFileDialog(targetOpenDialog, targetLocRes);
+                    handleFileDialog(targetOpenDialog, targetLocRes, targetLang);
                     break;
                 case OperationMode.Export:
                     handleFileDialog(targetSaveDialog, targetLocRes);
@@ -130,13 +132,46 @@ namespace lrxw
             }
         }
 
-        private void handleFileDialog(FileDialog dialog, TextBox text)
+        private void handleFileDialog(FileDialog dialog, TextBox text, TextBox lang = null)
         {
             dialog.FileName = text.Text;
             if (dialog.ShowDialog(this) == DialogResult.OK)
             {
                 text.Text = dialog.FileName;
+                if (lang != null && string.IsNullOrWhiteSpace(lang.Text))
+                {
+                    var f = Path.GetFileName(Path.GetDirectoryName(dialog.FileName));
+                    if (!string.IsNullOrWhiteSpace(f))
+                    {
+                        bool found = false;
+                        try
+                        {
+                            CultureInfo.GetCultureInfo(f);
+                            found = true;
+                        }
+                        catch (ArgumentException) { }
+                        if (found)
+                        {
+                            lang.Text = f;
+                        }
+                    }
+                }
             }
+        }
+
+        private static string GetLangCodeFromPath(string path)
+        {
+            var folder_name = Path.GetFileName(Path.GetDirectoryName(path));
+            if (!string.IsNullOrWhiteSpace(folder_name))
+            {
+                try
+                {
+                    CultureInfo.GetCultureInfo(folder_name);
+                    return folder_name;
+                }
+                catch (ArgumentException) { }
+            }
+            return null;
         }
 
         private async void runButton_Click(object sender, EventArgs ev)
