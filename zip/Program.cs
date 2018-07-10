@@ -17,13 +17,17 @@ namespace zip
 
         private const string Prefix = "lrx/";
 
+        private const string LRX = "../../../lrx/bin/Release/";
+
+        private const string LRXW = "../../../lrxw/bin/Release/";
+
         private static readonly string[] Manifest =
         {
-            "../../../lrx/bin/Release/lrx.exe",
-            "../../../lrx/bin/Release/lrx.exe.config",
-            "../../../lrx/bin/Release/Mono.Options.dll",
-            "../../../lrxw/bin/Release/lrxw.exe",
-            "../../../lrxw/bin/Release/lrxw.exe.config",
+            LRX + "lrx.exe",
+            LRX + "lrx.exe.config",
+            LRX + "Mono.Options.dll",
+            LRXW + "lrxw.exe",
+            LRXW + "lrxw.exe.config",
         };
 
         static void Main(string[] args)
