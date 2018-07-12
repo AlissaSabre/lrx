@@ -180,7 +180,7 @@ namespace lrx
         /// <param name="filename">Path name.</param>
         public void Save(string filename)
         {
-            using (var stream = File.OpenWrite(filename))
+            using (var stream = File.Create(filename))
             {
                 Save(stream);
             }
